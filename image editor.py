@@ -52,6 +52,24 @@ def brightness(image_path, value):
     im_adjusted.save(output_path)
     print("done!")
 
+def chromatic_aberration(image_path, offset):
+    output_path = input("Enter the output path: ")
+    im = Image.open(image_path)
+    width, height = im.size
+    r, g, b = im.split()
+
+    r_offset = Image.new("L", (width, height), 0)
+    g_offset = Image.new("L", (width, height), 0)
+    b_offset = Image.new("L", (width, height), 0)
+
+    r_offset.paste(r,(0, -offset))
+    g_offset.paste(g, (0, offset))
+    b_offset.paste(b, (offset, 0))
+    offset_image = Image.merge("RGB", (r_offset, g_offset, b_offset))
+    cropped_image = offset_image.crop((offset, 0, width - offset, height - 2 * offset))
+
+    cropped_image.save(output_path)
+    print("done!")
 
 
 print("Welcome to demleague's silly image editor!")
@@ -62,7 +80,8 @@ while loop:
     print("1. Pixelate the image")
     print("2. Posterize the image")
     print("3. Change image brightness")
-    print("4. Exit")
+    print("4. Chromatic aberration")
+    print("5. Exit")
     choice = int(input("Enter your choice: "))
 
     if choice == 1:
@@ -82,6 +101,12 @@ while loop:
         brightness(imagePath, amt3)
 
     elif choice == 4:
+        imagePath = input("Enter the filename of the image you would like to edit: ")
+        amt4 = int(input("Enter the amount of offset: "))
+        chromatic_aberration(imagePath, amt4)
+
+
+    elif choice == 5:
         loop = False
         print("Exiting the editor.")
     else:
